@@ -28,6 +28,20 @@ If you prefer using the command line:
 pip install opencv-python mediapipe pyautogui pydirectinput numpy
 ```
 
+### Run the script
+
+```Bash
+
+python HandControllerFinal.py
+```
+Or simply double click the HandControllerFinal.py in File Explorer
+The script will request Administrator privileges. Click Yes to allow it to control the Windows On-Screen Keyboard.
+
+### How to use
+Position your hand in front of the camera and start gesturing!
+
+To quit, bring focus to the webcam feed window and press 'q'.
+
 ### Gesture Control Map
 
 | Gesture | Action | Description |
