@@ -1,0 +1,29 @@
+# AI Virtual Mouse — Hand Gesture Controller
+
+A computer vision-based application that turns your webcam into a fully functional virtual mouse. Built using Python, OpenCV, and Google's MediaPipe, this project tracks your hand in 3D space to control your PC cursor and trigger actions using intuitive hand gestures.
+
+## ✨ Features
+
+* **Full Mouse Emulation:** Supports left-click, right-click, scrolling, and seamless drag-and-drop mechanics.
+* **Keyboard Shortcuts & OSK:** Includes gesture triggers for the Left/Right Arrow keys and the Windows On-Screen Keyboard.
+* **Floating UI Legend:** An always-on-top OpenCV window that clearly displays the available controls during use.
+* **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard).
+
+---
+
+## 🛠️ Requirements & Setup
+
+### Prerequisites
+* **Python 3.9+** (Tested and recommended for MediaPipe Model Maker compatibility)
+* A working webcam
+* Windows OS (Required for the On-Screen Keyboard toggle feature)
+
+### Installation (1-Click Method)
+1. Clone or download this repository.
+2. Double-click the `Install_Setup.bat` file. This will automatically install all required dependencies from the `requirements.txt` file.
+3. *Ensure the `gesture_recognizer.task` model file is in the same folder as the Python script.*
+
+### Manual Installation
+If you prefer using the command line:
+```bash
+pip install opencv-python mediapipe pyautogui pydirectinput numpy
