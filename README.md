@@ -6,7 +6,6 @@ A computer vision-based application that turns your webcam into a fully function
 
 * **Full Mouse Emulation:** Supports left-click, right-click, scrolling, and seamless drag-and-drop mechanics.
 * **Keyboard Shortcuts & OSK:** Includes gesture triggers for the Left/Right Arrow keys and the Windows On-Screen Keyboard.
-* **Floating UI Legend:** An always-on-top OpenCV window that clearly displays the available controls during use.
 * **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard).
 
 ---
@@ -27,3 +26,31 @@ A computer vision-based application that turns your webcam into a fully function
 If you prefer using the command line:
 ```bash
 pip install opencv-python mediapipe pyautogui pydirectinput numpy
+```
+
+### Run the script
+
+```Bash
+
+python HandControllerFinal.py
+```
+Or simply double click the HandControllerFinal.py in File Explorer
+The script will request Administrator privileges. Click Yes to allow it to control the Windows On-Screen Keyboard.
+
+### How to use
+Position your hand in front of the camera and start gesturing!
+
+To quit, bring focus to the webcam feed window and press 'q'.
+
+### Gesture Control Map
+
+| Gesture | Action | Description |
+| :--- | :--- | :--- |
+| **Index Pointing Up** | **Left Click** | Triggers a standard left mouse click. |
+| **Victory (V-Sign)** | **Right Click** | Triggers a right mouse click (context menu). |
+| **Open Palm** | **Grab / Hold** | Triggers `mouseDown` to grab windows or text. |
+| **Closed Fist** | **Drop / Release** | Triggers `mouseUp` to release the item. |
+| **Thumb Up** | **Scroll Up** | Smoothly scrolls the active page upwards. |
+| **Thumb Down** | **Scroll Down** | Smoothly scrolls the active page downwards. |
+| **OK Sign** | **Arrow Keys (L/R)** | Move hand Left/Right to trigger arrow keys. |
+| **"I Love You" Sign** | **Toggle Windows OSK** | Opens or closes the Windows On-Screen Keyboard. |
