@@ -5,8 +5,8 @@ A computer vision-based application that turns your webcam into a fully function
 ## ✨ Features
 
 * **Full Mouse Emulation:** Supports left-click, right-click, scrolling, and seamless drag-and-drop mechanics.
-* **Keyboard Shortcuts & OSK:** Includes gesture triggers for the Left/Right Arrow keys and the Windows On-Screen Keyboard.
-* **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard).
+* **Keyboard Shortcuts & OSK:** Includes gesture triggers for screen capture and the Windows On-Screen Keyboard.
+* **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard). This can be turned of by removing/commenting ADMIN ELEVATION CHECK block
 
 ---
 
@@ -41,6 +41,8 @@ The script will request Administrator privileges. Click Yes to allow it to contr
 Position your hand in front of the camera and start gesturing!
 
 To quit, bring focus to the webcam feed window and press 'q'.
+
+You may want to adjust SCREEN_MARGIN to fit your camera's resolution. The current setting is best for 1080p camera
 
 ### Gesture Control Map
 

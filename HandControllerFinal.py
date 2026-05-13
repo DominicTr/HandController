@@ -80,12 +80,10 @@ if not os.path.exists(SCREENSHOT_FOLDER):
 
 def on_left_click():
     pydirectinput.click()
-    print("Single Click Triggered")
 
 
 def on_right_click():
     pydirectinput.click(button='right')
-    print("Right Click Triggered")
 
 
 def on_scroll_up():
@@ -271,12 +269,10 @@ def main():
                     if not mouse_pressed:
                         pyautogui.mouseDown(button='left')
                         mouse_pressed = True
-                        print("mouseDown Triggered")
                 if current_gesture == "Closed_Fist":
                     if mouse_pressed:
                         pyautogui.mouseUp(button='left')
                         mouse_pressed = False
-                        print("mouseUp Triggered")
 
                 # Scroll Up
                 if current_gesture == "Thumb_Up":
