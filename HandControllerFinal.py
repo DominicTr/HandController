@@ -10,6 +10,12 @@ import os
 import ctypes
 import sys
 
+pyautogui.FAILSAFE = False
+
+# Hides all non-critical C++ backend logs (like Clearcut/TensorFlow)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['MEDIAPIPE_DISABLE_GPU'] = '1' # Sometimes helps stabilize logs on school PCs
+
 # --- ADMIN ELEVATION CHECK ---
 #COMMENT OUT THIS BLOCK IF YOU DON'T WANT THE PROGRAM TO REQUEST ADMIN RIGHTS (required for OSK toggle and some input features)
 def is_admin():
@@ -25,13 +31,13 @@ if not is_admin():
     sys.exit()
 # -----------------------------
 
-
-
 # --- CONFIGURATION ---
 SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 SMOOTHING = 5
 SCROLL_SPEED = 300
 MOVE_THRESHOLD = 50
+SCREEN_MARGIN = 300 # change this if you want to adjust the active area for mouse movement (default 300px margin on all sides)
+SCREENSHOT_FOLDER = 'screenshots'
 
 HAND_CONNECTIONS = [
     (0, 1), (1, 2), (2, 3), (3, 4),    # Thumb
@@ -52,7 +58,7 @@ is_right_clicking = False
 mouse_pressed = False
 is_scrolling_up = False
 is_scrolling_down = False
-prev_x = None
+is_capping = False
 plocX, plocY = 0, 0
 clocX, clocY = 0, 0
 
@@ -64,6 +70,11 @@ def result_callback(result: vision.GestureRecognizerResult, output_image: mp.Ima
     if result.gestures:
         latest_gesture = result.gestures[0][0].category_name
 
+
+# --- create screenshots folder if it doesn't exist ---
+
+if not os.path.exists(SCREENSHOT_FOLDER):
+    os.makedirs(SCREENSHOT_FOLDER)
 
 # --- Gesture Action Handlers ---
 
@@ -83,6 +94,9 @@ def on_scroll_up():
 
 def on_scroll_down():
     pyautogui.scroll(-SCROLL_SPEED)
+
+def on_screenshot():
+    pyautogui.screenshot(f'{SCREENSHOT_FOLDER}/screenshot_{int(time.time())}.png')
 
 
 # --- UI Functions ---
@@ -118,6 +132,9 @@ def draw_no_hand(frame):
     cv2.putText(frame, "No hand detected", (20, 60),
                 cv2.FONT_HERSHEY_DUPLEX, 1.2, (255, 100, 100), 2)
     
+def draw_screenshot(frame):
+    cv2.putText(frame, "Screenshot Taken!", (20, 80),
+                cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 255, 0), 2)
 
 def draw_legend(img):
     # The list of controls (OSK removed)
@@ -129,7 +146,7 @@ def draw_legend(img):
         "Fist     : Drop/Release",
         "Thumb Up : Scroll Up",
         "Thumb Dn : Scroll Down",
-        "OK       : Arrows L/R",
+        "OK       : Screenshot",
         "I Love You : Toggle OSK",
         "Press 'q' to quit"
     ]
@@ -155,7 +172,7 @@ def draw_legend(img):
 def main():
     global is_clicking, is_right_clicking, mouse_pressed
     global is_scrolling_up, is_scrolling_down, osk_active
-    global prev_was_ilove, prev_x, plocX, plocY, clocX, clocY
+    global prev_was_ilove, is_capping, plocX, plocY, clocX, clocY
 
     # --- Load model ---
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -196,7 +213,7 @@ def main():
     print("  Thumb_Up      : Scroll Up")
     print("  Thumb_Down    : Scroll Down")
     print("  ILoveYou      : Toggle On-Screen Keyboard")
-    print("  OK            : Arrow Keys (left/right)")
+    print("  OK            : Take Screenshot")
     print("  Press 'q' to quit.")
     print()
 
@@ -215,13 +232,13 @@ def main():
             recognizer.recognize_async(mp_image, timestamp)
 
             current_gesture = latest_gesture
-
+            
             if latest_landmarks:
                 hand = latest_landmarks[0]
                 palm_hand = hand[0]
 
                 # --- Mouse movement ---
-                margin = 300
+                margin = SCREEN_MARGIN
                 screen_x = int((palm_hand.x * w - margin) * SCREEN_WIDTH / (w - 2 * margin))
                 screen_y = int((palm_hand.y * h - margin) * SCREEN_HEIGHT / (h - 2 * margin))
 
@@ -277,8 +294,7 @@ def main():
                 else:
                     is_scrolling_down = False
 
-                # open on screen keyboard with "ILoveYou" Gesture (Thumb + Pinky up, others down)
-                # Windows logo key + Ctrl + O
+                # Open on screen keyboard
                 if latest_gesture == "ILoveYou":
                     if not is_Open:
                         pyautogui.hotkey('win', 'ctrl', 'o')
@@ -286,21 +302,14 @@ def main():
                 else:
                     is_Open = False
 
-
-                # Arrow Keys
+                # Take screenshot
                 if current_gesture == "OK":
-                    curr_x = int(palm_hand.x * w)
-                    if prev_x is not None:
-                        diff = curr_x - prev_x
-                        if diff > MOVE_THRESHOLD:
-                            pyautogui.press('right')
-                            print("RIGHT KEY Triggered")
-                        elif diff < -MOVE_THRESHOLD:
-                            pyautogui.press('left')
-                            print("LEFT KEY Triggered")
-                    prev_x = curr_x
+                    if not is_capping:
+                        on_screenshot()
+                        draw_screenshot(frame)
+                        is_capping = True
                 else:
-                    prev_x = None
+                    is_capping = False
 
                 # --- Draw UI ---
                 draw_hand_skeleton(frame, h, w)
