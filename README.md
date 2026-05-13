@@ -52,5 +52,5 @@ To quit, bring focus to the webcam feed window and press 'q'.
 | **Closed Fist** | **Drop / Release** | Triggers `mouseUp` to release the item. |
 | **Thumb Up** | **Scroll Up** | Smoothly scrolls the active page upwards. |
 | **Thumb Down** | **Scroll Down** | Smoothly scrolls the active page downwards. |
-| **OK Sign** | **Arrow Keys (L/R)** | Move hand Left/Right to trigger arrow keys. |
+| **OK Sign** | **Take screenshots** | Take screenshots and save it to the SCReENSHOT_FOLDER. |
 | **"I Love You" Sign** | **Toggle Windows OSK** | Opens or closes the Windows On-Screen Keyboard. |
