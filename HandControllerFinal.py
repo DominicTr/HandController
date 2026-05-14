@@ -36,7 +36,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 SMOOTHING = 5
 SCROLL_SPEED = 300
 MOVE_THRESHOLD = 50
-SCREEN_MARGIN = 300 # change this if you want to adjust the active area for mouse movement (default 300px margin on all sides)
+SCREEN_MARGIN = 100 # change this if you want to adjust the active area for mouse movement (default 300px margin on all sides)
 SCREENSHOT_FOLDER = 'screenshots'
 
 HAND_CONNECTIONS = [
@@ -238,7 +238,7 @@ def main():
                 # --- Mouse movement ---
                 margin = SCREEN_MARGIN
                 screen_x = int((palm_hand.x * w - margin) * SCREEN_WIDTH / (w - 2 * margin))
-                screen_y = int((palm_hand.y * h - margin) * SCREEN_HEIGHT / (h - 2 * margin))
+                screen_y = int(((palm_hand.y * h - margin)) * SCREEN_HEIGHT / (h - 2 * margin))
 
                 clocX = plocX + (screen_x - plocX) / SMOOTHING
                 clocY = plocY + (screen_y - plocY) / SMOOTHING
