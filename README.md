@@ -6,7 +6,7 @@ A computer vision-based application that turns your webcam into a fully function
 
 * **Full Mouse Emulation:** Supports left-click, right-click, scrolling, and seamless drag-and-drop mechanics.
 * **Keyboard Shortcuts & OSK:** Includes gesture triggers for screen capture and the Windows On-Screen Keyboard.
-* **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard). This can be turned of by removing/commenting ADMIN ELEVATION CHECK block
+* **Auto-Admin Elevation:** Automatically requests Administrator privileges on startup to ensure PyAutoGUI can interact with elevated Windows elements (like the On-Screen Keyboard). This can be turned off by removing/commenting ADMIN ELEVATION CHECK block
 
 ---
 
@@ -42,7 +42,7 @@ Position your hand in front of the camera and start gesturing!
 
 To quit, bring focus to the webcam feed window and press 'q'.
 
-You may want to adjust SCREEN_MARGIN to fit your camera's resolution. The current setting is best for 1080p camera
+You may want to adjust SCREEN_MARGIN to fit your camera's resolution. The current setting is best for 1080p cameras
 
 ### Gesture Control Map
 
@@ -54,5 +54,5 @@ You may want to adjust SCREEN_MARGIN to fit your camera's resolution. The curren
 | **Closed Fist** | **Drop / Release** | Triggers `mouseUp` to release the item. |
 | **Thumb Up** | **Scroll Up** | Smoothly scrolls the active page upwards. |
 | **Thumb Down** | **Scroll Down** | Smoothly scrolls the active page downwards. |
-| **OK Sign** | **Take screenshots** | Take screenshots and save it to the SCReENSHOT_FOLDER. |
+| **OK Sign** | **Take screenshots** | Take screenshots and save it to the SCREENSHOT_FOLDER. |
 | **"I Love You" Sign** | **Toggle Windows OSK** | Opens or closes the Windows On-Screen Keyboard. |
