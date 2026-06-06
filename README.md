@@ -42,7 +42,19 @@ Position your hand in front of the camera and start gesturing!
 
 To quit, bring focus to the webcam feed window and press 'q'.
 
-You may want to adjust SCREEN_MARGIN to fit your camera's resolution. The current setting is best for 1080p cameras
+**Camera & Gesture Setup:**
+- The application uses a fixed camera resolution of 1280x720 for consistent performance
+- Adjust `SCREEN_MARGIN_PERCENT` in the code (default: 15%)
+  - **10-12%** = Larger usable area, better for gestures near edges
+  - **15%** = Balanced (recommended default)
+  - **20-25%** = Smaller area, safer for beginners
+  - **Set to 0** = 100% coverage (no margin, use with caution)
+- Adjust `DISPLAY_WIDTH` and `DISPLAY_HEIGHT` to resize the camera feed window (default: 1024x768)
+  - Set to **0** = Use original camera resolution
+  - Recommended for laptops: 800x600 or 1024x768
+  - Recommended for larger screens: 1280x720 or 1536x1080
+
+To change settings: Edit `HandControllerFinal.py`, find the configuration section, and adjust the values.
 
 ### Gesture Control Map
 

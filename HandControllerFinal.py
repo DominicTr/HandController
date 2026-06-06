@@ -36,8 +36,25 @@ SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 SMOOTHING = 5
 SCROLL_SPEED = 300
 MOVE_THRESHOLD = 50
-SCREEN_MARGIN = 100 # change this if you want to adjust the active area for mouse movement (default 300px margin on all sides)
+SCREEN_MARGIN_PERCENT = 15  # Percentage of camera frame (15% = 20px on 1280x720)
+                             # Values: 10-25% recommended. Lower = larger usable area, Higher = safer edge
+                             # Set to 0 for 100% coverage (no margin)
 SCREENSHOT_FOLDER = 'screenshots'
+
+# Camera configuration (set desired resolution here)
+CAMERA_WIDTH = 1280
+CAMERA_HEIGHT = 720
+
+# Display window configuration
+DISPLAY_WIDTH = 0   # Display window width (0 = use original)
+DISPLAY_HEIGHT = 0   # Display window height (0 = use original)
+
+# Calculate margin in pixels based on percentage
+def calculate_margin(frame_w, frame_h):
+    """Convert percentage margin to pixel values"""
+    margin_x = int(frame_w * SCREEN_MARGIN_PERCENT / 100)
+    margin_y = int(frame_h * SCREEN_MARGIN_PERCENT / 100)
+    return max(margin_x, margin_y)  # Use the larger of the two for consistent behavior
 
 HAND_CONNECTIONS = [
     (0, 1), (1, 2), (2, 3), (3, 4),    # Thumb
@@ -61,6 +78,21 @@ is_scrolling_down = False
 is_capping = False
 plocX, plocY = 0, 0
 clocX, clocY = 0, 0
+
+# Calculate aspect ratio normalization factor
+def normalize_aspect_ratio(frame_w, frame_h):
+    """Normalize hand coordinates to account for aspect ratio differences"""
+    screen_ratio = SCREEN_WIDTH / SCREEN_HEIGHT
+    cam_ratio = frame_w / frame_h
+
+    if cam_ratio > screen_ratio:
+        # Camera is wider - adjust y coordinate
+        scale_y = screen_ratio / cam_ratio
+        return None, scale_y
+    else:
+        # Camera is taller - adjust x coordinate
+        scale_x = cam_ratio / screen_ratio
+        return scale_x, None
 
 # --- MediaPipe Callback ---
 
@@ -202,6 +234,10 @@ def main():
         input("Press Enter to exit...")
         return
 
+    # Set camera resolution
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)
+
     print("AI Virtual Mouse — Hand Gesture Controller")
     print("Controls:")
     print("  Pointing_Up   : Left Click")
@@ -222,6 +258,15 @@ def main():
                 break
 
             frame = cv2.flip(frame, 1)
+
+            # Resize display frame if configured
+            if DISPLAY_WIDTH > 0 and DISPLAY_HEIGHT > 0:
+                try:
+                    frame = cv2.resize(frame, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+                    h, w, _ = frame.shape  # Update dimensions after resize
+                except:
+                    pass  # Fallback if resize doesn't work
+
             h, w, _ = frame.shape
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
@@ -235,10 +280,26 @@ def main():
                 hand = latest_landmarks[0]
                 palm_hand = hand[0]
 
+                # --- Aspect ratio normalization ---
+                scale_x, scale_y = normalize_aspect_ratio(w, h)
+
                 # --- Mouse movement ---
-                margin = SCREEN_MARGIN
-                screen_x = int((palm_hand.x * w - margin) * SCREEN_WIDTH / (w - 2 * margin))
-                screen_y = int(((palm_hand.y * h - margin)) * SCREEN_HEIGHT / (h - 2 * margin))
+                margin = calculate_margin(w, h)
+
+                # Calculate raw screen coordinates
+                raw_screen_x = (palm_hand.x * w - margin) * SCREEN_WIDTH / (w - 2 * margin)
+                raw_screen_y = ((palm_hand.y * h - margin)) * SCREEN_HEIGHT / (h - 2 * margin)
+
+                # Apply aspect ratio normalization
+                if scale_x is not None:  # Camera is taller
+                    screen_x = int(raw_screen_x * scale_x)
+                    screen_y = int(raw_screen_y)
+                elif scale_y is not None:  # Camera is wider
+                    screen_x = int(raw_screen_x)
+                    screen_y = int(raw_screen_y * scale_y)
+                else:  # Same aspect ratio
+                    screen_x = int(raw_screen_x)
+                    screen_y = int(raw_screen_y)
 
                 clocX = plocX + (screen_x - plocX) / SMOOTHING
                 clocY = plocY + (screen_y - plocY) / SMOOTHING
@@ -315,6 +376,13 @@ def main():
             else:
                 draw_no_hand(frame)
                 draw_legend(frame)
+
+            # Resize display window if configured
+            if DISPLAY_WIDTH > 0 and DISPLAY_HEIGHT > 0:
+                try:
+                    cv2.resizeWindow('AI Virtual Mouse', DISPLAY_WIDTH, DISPLAY_HEIGHT)
+                except:
+                    pass  # Fallback if resize doesn't work on this platform
 
             cv2.imshow('AI Virtual Mouse', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
